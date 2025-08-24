@@ -24,13 +24,6 @@ namespace CarAPI.Controllers
             return int.Parse(dealerIdClaim ?? "0");
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetCars()
-        {
-            var dealerId = GetDealerId();
-            var result = await _carService.GetCarsAsync(dealerId);
-            return Ok(result);
-        }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCar(int id)
@@ -38,6 +31,14 @@ namespace CarAPI.Controllers
             var dealerId = GetDealerId();
             var result = await _carService.GetCarByIdAsync(dealerId, id);
             return result.Success ? Ok(result) : NotFound(result);
+        }
+
+        [HttpGet("search")]
+        public async Task<IActionResult> SearchCars([FromQuery] string? make, [FromQuery] string? model)
+        {
+            var dealerId = GetDealerId();
+            var result = await _carService.SearchCarsAsync(dealerId, make, model);
+            return Ok(result);
         }
 
         [HttpPost]
@@ -84,12 +85,6 @@ namespace CarAPI.Controllers
             return result.Success ? Ok(result) : NotFound(result);
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchCars([FromQuery] string? make, [FromQuery] string? model)
-        {
-            var dealerId = GetDealerId();
-            var result = await _carService.SearchCarsAsync(dealerId, make, model);
-            return Ok(result);
-        }
+
     }
 }

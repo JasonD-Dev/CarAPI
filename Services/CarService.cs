@@ -69,13 +69,22 @@ namespace CarAPI.Services
             };
         }
 
-        public async Task<ApiResponse<List<CarResponse>>> GetCarsAsync(int dealerId)
+        public async Task<ApiResponse<List<CarResponse>>> SearchCarsAsync(int dealerId, string? make, string? model)
         {
             using var connection = _dbService.CreateConnection();
 
-            var cars = await connection.QueryAsync<Car>(
-                "SELECT * FROM Cars WHERE DealerId = @DealerId ORDER BY Make, Model",
-                new { DealerId = dealerId });
+            var sql = "SELECT * FROM Cars WHERE DealerId = @DealerId";
+            var parameters = new { DealerId = dealerId, Make = make, Model = model };
+
+            if (!string.IsNullOrEmpty(make))
+                sql += " AND LOWER(Make) LIKE LOWER('%' || @Make || '%')";
+
+            if (!string.IsNullOrEmpty(model))
+                sql += " AND LOWER(Model) LIKE LOWER('%' || @Model || '%')";
+
+            sql += " ORDER BY Make, Model";
+
+            var cars = await connection.QueryAsync<Car>(sql, parameters);
 
             var carResponses = cars.Select(c => new CarResponse
             {
@@ -156,40 +165,6 @@ namespace CarAPI.Services
             };
         }
 
-        public async Task<ApiResponse<List<CarResponse>>> SearchCarsAsync(int dealerId, string? make, string? model)
-        {
-            using var connection = _dbService.CreateConnection();
-
-            var sql = "SELECT * FROM Cars WHERE DealerId = @DealerId";
-            var parameters = new { DealerId = dealerId, Make = make, Model = model };
-
-            if (!string.IsNullOrEmpty(make))
-                sql += " AND LOWER(Make) LIKE LOWER('%' || @Make || '%')";
-
-            if (!string.IsNullOrEmpty(model))
-                sql += " AND LOWER(Model) LIKE LOWER('%' || @Model || '%')";
-
-            sql += " ORDER BY Make, Model";
-
-            var cars = await connection.QueryAsync<Car>(sql, parameters);
-
-            var carResponses = cars.Select(c => new CarResponse
-            {
-                Id = c.Id,
-                Make = c.Make,
-                Model = c.Model,
-                Year = c.Year,
-                StockLevel = c.StockLevel,
-                Price = c.Price,
-                CreatedAt = c.CreatedAt,
-                UpdatedAt = c.UpdatedAt
-            }).ToList();
-
-            return new ApiResponse<List<CarResponse>>
-            {
-                Success = true,
-                Data = carResponses
-            };
-        }
+        
     }
 }
