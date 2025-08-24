@@ -66,8 +66,8 @@ namespace CarAPI.Controllers
             return result.Success ? Ok(result) : NotFound(result);
         }
 
-        [HttpPut("{id}/stock")]
-        public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateStockRequest request)
+        [HttpPut("{id}/update")]
+        public async Task<IActionResult> UpdateStock(int id, [FromBody] UpdateCarRequest request)
         {
             if (!ModelState.IsValid)
             {
@@ -80,7 +80,7 @@ namespace CarAPI.Controllers
             }
 
             var dealerId = GetDealerId();
-            var result = await _carService.UpdateStockLevelAsync(dealerId, id, request);
+            var result = await _carService.UpdateCarAsync(dealerId, id, request);
             return result.Success ? Ok(result) : NotFound(result);
         }
 

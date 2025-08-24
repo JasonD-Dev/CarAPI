@@ -24,10 +24,13 @@ namespace CarAPI.DTOs
             public decimal Price { get; set; }
         }
 
-        public class UpdateStockRequest
+        public class UpdateCarRequest
         {
             [Range(0, int.MaxValue)]
             public int StockLevel { get; set; }
+            
+           [Range(0, double.MaxValue)]
+            public decimal Price { get; set; }
         }
 
         public class LoginRequest 
@@ -62,7 +65,7 @@ namespace CarAPI.DTOs
             public List<string> Errors { get; set; } = new();
         }
 
-        public class CarResponse // Response for when Car is fetched
+        public class CarResponse // Response for when Cars are fetched
         {
             public int Id { get; set; }
             public string Make { get; set; } = string.Empty;

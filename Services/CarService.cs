@@ -130,13 +130,13 @@ namespace CarAPI.Services
             };
         }
 
-        public async Task<ApiResponse<CarResponse>> UpdateStockLevelAsync(int dealerId, int carId, UpdateStockRequest request)
+        public async Task<ApiResponse<CarResponse>> UpdateCarAsync(int dealerId, int carId, UpdateCarRequest request)
         {
             using var connection = _dbService.CreateConnection();
 
             var rowsAffected = await connection.ExecuteAsync(
-                "UPDATE Cars SET StockLevel = @StockLevel, UpdatedAt = @UpdatedAt WHERE Id = @Id AND DealerId = @DealerId",
-                new { StockLevel = request.StockLevel, UpdatedAt = DateTime.Now, Id = carId, DealerId = dealerId });
+                "UPDATE Cars SET StockLevel = @StockLevel, price = @price, UpdatedAt = @UpdatedAt WHERE Id = @Id AND DealerId = @DealerId",
+                new { StockLevel = request.StockLevel, price = request.Price, UpdatedAt = DateTime.Now, Id = carId, DealerId = dealerId });
 
             if (rowsAffected == 0)
             {
@@ -151,7 +151,7 @@ namespace CarAPI.Services
             return new ApiResponse<CarResponse>
             {
                 Success = true,
-                Message = "Stock level updated successfully",
+                Message = "Car updated successfully",
                 Data = car.Data
             };
         }
