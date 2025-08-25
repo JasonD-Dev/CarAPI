@@ -1,6 +1,6 @@
 ﻿using CarAPI.Data;
-using CarAPI.Models;
 using CarAPI.DTOs;
+using CarAPI.Models;
 using Dapper;
 
 namespace CarAPI.Services

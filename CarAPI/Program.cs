@@ -44,7 +44,6 @@ builder.Services.AddSwaggerGen(c =>
 
 // Configure JWT Authentication
 IConfiguration jwtSettings = builder.Configuration.GetSection("JwtSettings");
-
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -61,7 +60,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ClockSkew = TimeSpan.Zero
         };
     });
-
 builder.Services.AddAuthorization();
 
 // Register services
@@ -75,14 +73,14 @@ var app = builder.Build();
 var dbService = app.Services.GetRequiredService<DatabaseService>();
 await dbService.InitializeDatabaseAsync();
 
-// Configure pipeline
+// Configure Swagger pipeline
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
         c.SwaggerEndpoint("/swagger/v1/swagger.json", "CarAPI");
-        c.RoutePrefix = string.Empty; // Serve Swagger UI at root
+        c.RoutePrefix = string.Empty;
     });
 }
 
