@@ -206,4 +206,4 @@ Cars to Add
 
 ## 📊 Architecture Diagram
 
-
+![API Architecture Diagram](https://github.com/JasonD-Dev/CarAPI/blob/main/CarAPIDiagram.png?raw=true)
