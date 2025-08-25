@@ -41,7 +41,7 @@ namespace CarAPI.Controllers
             return Ok(result);
         }
 
-        [HttpPost]
+        [HttpPost("add")]
         public async Task<IActionResult> AddCar([FromBody] AddCarRequest request)
         {
             if (!ModelState.IsValid)
@@ -59,7 +59,7 @@ namespace CarAPI.Controllers
             return result.Success ? CreatedAtAction(nameof(GetCar), new { id = result.Data?.Id }, result) : BadRequest(result);
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> RemoveCar(int id)
         {
             var dealerId = GetDealerId();
