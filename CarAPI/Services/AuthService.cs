@@ -126,6 +126,7 @@ namespace CarAPI.Services
         {
             return BCrypt.Net.BCrypt.Verify(password, hash);
         }
+   
 
     }
 }

@@ -4,22 +4,18 @@ namespace CarAPI.DTOs
 {
         public class AddCarRequest 
         {
-            [Required]
-            [StringLength(50)]
+            [Required, StringLength(20), RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Only alphanumeric characters are allowed")]
             public string Make { get; set; } = string.Empty;
 
-            [Required]
-            [StringLength(100)]
+            [Required, StringLength(20), RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Only alphanumeric characters are allowed")]
             public string Model { get; set; } = string.Empty;
 
-            [Required]
-            [Range(1900, 2025)]
+            [Required, Range(1900, 2025)]
             public int Year { get; set; }
 
             [Range(0, int.MaxValue)]
             public int StockLevel { get; set; }
 
-            [Required]
             [Range(0, double.MaxValue)]
             public decimal Price { get; set; }
         }
@@ -29,13 +25,13 @@ namespace CarAPI.DTOs
             [Range(0, int.MaxValue)]
             public int StockLevel { get; set; }
             
-           [Range(0, double.MaxValue)]
+            [Range(0, double.MaxValue)]
             public decimal Price { get; set; }
         }
 
         public class LoginRequest 
         {
-            [Required]
+            [Required, RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Only alphanumeric characters are allowed")]
             public string Username { get; set; } = string.Empty;
 
             [Required]
@@ -44,16 +40,13 @@ namespace CarAPI.DTOs
 
         public class RegisterRequest
         {
-            [Required]
-            [StringLength(50)]
+            [Required, StringLength(40), RegularExpression(@"^[a-zA-Z0-9]*$", ErrorMessage = "Only alphanumeric characters are allowed")]
             public string Username { get; set; } = string.Empty;
 
-            [Required]
-            [MinLength(6)]
+            [Required, MinLength(6), MaxLength(40)]
             public string Password { get; set; } = string.Empty;
 
-            [Required]
-            [StringLength(100)]
+            [Required, StringLength(50)]
             public string CompanyName { get; set; } = string.Empty;
         }
 

@@ -33,11 +33,11 @@ namespace CarAPI.Controllers
             return result.Success ? Ok(result) : NotFound(result);
         }
 
-        [HttpGet("search")]
-        public async Task<IActionResult> SearchCars([FromQuery] string? make, [FromQuery] string? model)
+        [HttpGet]
+        public async Task<IActionResult> GetCarsByMakeAndModel([FromQuery] string? make, [FromQuery] string? model)
         {
             var dealerId = GetDealerId();
-            var result = await _carService.SearchCarsAsync(dealerId, make, model);
+            var result = await _carService.GetCarsByMakeAndModelAsync(dealerId, make, model);
             return Ok(result);
         }
 

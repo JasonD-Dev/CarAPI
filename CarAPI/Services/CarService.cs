@@ -69,7 +69,7 @@ namespace CarAPI.Services
             };
         }
 
-        public async Task<ApiResponse<List<CarResponse>>> SearchCarsAsync(int dealerId, string? make, string? model)
+        public async Task<ApiResponse<List<CarResponse>>> GetCarsByMakeAndModelAsync(int dealerId, string? make, string? model)
         {
             using var connection = _dbService.CreateConnection();
 
