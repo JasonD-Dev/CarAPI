@@ -35,7 +35,7 @@ namespace CarAPI.Services
             using var connection = _dbService.CreateConnection();
 
             var dealer = await connection.QueryFirstOrDefaultAsync<Dealer>(
-                "SELECT * FROM Dealers WHERE Username = @Username",
+                "SELECT Id, Username, PasswordHash, CompanyName, CreatedAt FROM Dealers WHERE Username = @Username",
                 new { Username = request.Username });
 
             if (dealer == null || !VerifyPassword(request.Password, dealer.PasswordHash))
@@ -74,10 +74,12 @@ namespace CarAPI.Services
 
             if (existingDealer != null)
             {
+                string errMessage = "Dealer already exists.";
                 return new ApiResponse<string>
                 {
                     Success = false,
-                    Message = "Username already exists"
+                    Errors = { errMessage },
+                    Message = errMessage + " Please Login."
                 };
             }
 

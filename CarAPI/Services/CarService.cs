@@ -2,6 +2,7 @@
 using CarAPI.DTOs;
 using CarAPI.Models;
 using Dapper;
+using System.Reflection;
 
 namespace CarAPI.Services
 {
@@ -18,30 +19,51 @@ namespace CarAPI.Services
         {
             using var connection = _dbService.CreateConnection();
 
-            var id = await connection.QuerySingleAsync<int>(@"
+            var sql = @"SELECT Id, Make, Model, Year, StockLevel, Price, CreatedAt, UpdatedAt FROM Cars WHERE DealerId = @DealerId AND Make = @Make AND Model = @Model AND Year = @Year";
+            var parameters = new { DealerId = dealerId, Make = request.Make, Model = request.Model, Year = request.Year };
+
+            var carExists = await connection.QuerySingleOrDefaultAsync<Car>(sql, parameters);
+
+            if (carExists != null)
+            {
+                var car = await GetCarByIdAsync(dealerId, carExists.Id);
+                string msgError = "Car already exists.";
+                return new ApiResponse<CarResponse>
+                {
+                    Success = false,
+                    Data = car.Data,
+                    Errors = new List<string> { msgError },
+                    Message = msgError += " Please enter a new car"
+                };
+            }
+            else
+            {
+                var id = await connection.QuerySingleAsync<int>(@"
                 INSERT INTO Cars (DealerId, Make, Model, Year, StockLevel, Price, CreatedAt, UpdatedAt)
                 VALUES (@DealerId, @Make, @Model, @Year, @StockLevel, @Price, @CreatedAt, @UpdatedAt);
                 SELECT last_insert_rowid();",
-                new
+                    new
+                    {
+                        DealerId = dealerId,
+                        request.Make,
+                        request.Model,
+                        request.Year,
+                        request.StockLevel,
+                        request.Price,
+                        CreatedAt = DateTime.Now,
+                        UpdatedAt = DateTime.Now
+                    });
+
+                var car = await GetCarByIdAsync(dealerId, id);
+
+                return new ApiResponse<CarResponse>
                 {
-                    DealerId = dealerId,
-                    request.Make,
-                    request.Model,
-                    request.Year,
-                    request.StockLevel,
-                    request.Price,
-                    CreatedAt = DateTime.Now,
-                    UpdatedAt = DateTime.Now
-                });
+                    Success = true,
+                    Message = "Car added successfully",
+                    Data = car.Data
+                };
 
-            var car = await GetCarByIdAsync(dealerId, id);
-
-            return new ApiResponse<CarResponse>
-            {
-                Success = true,
-                Message = "Car added successfully",
-                Data = car.Data
-            };
+            }
         }
 
         public async Task<ApiResponse<bool>> RemoveCarAsync(int dealerId, int carId)
@@ -54,10 +76,12 @@ namespace CarAPI.Services
 
             if (rowsAffected == 0)
             {
+                string msgError = "Car not found";
                 return new ApiResponse<bool>
                 {
                     Success = false,
-                    Message = "Car not found"
+                    Message = msgError += " Please enter correct car Id.",
+                    Errors = new List<string> { msgError }
                 };
             }
 
@@ -73,7 +97,7 @@ namespace CarAPI.Services
         {
             using var connection = _dbService.CreateConnection();
 
-            var sql = "SELECT * FROM Cars WHERE DealerId = @DealerId";
+            var sql = "SELECT Id, Make, Model, Year, StockLevel, Price, CreatedAt, UpdatedAt FROM Cars WHERE DealerId = @DealerId";
             var parameters = new { DealerId = dealerId, Make = make, Model = model };
 
             if (!string.IsNullOrEmpty(make))
@@ -110,14 +134,14 @@ namespace CarAPI.Services
             using var connection = _dbService.CreateConnection();
 
             var car = await connection.QueryFirstOrDefaultAsync<Car>(
-                "SELECT * FROM Cars WHERE Id = @Id AND DealerId = @DealerId",
+                @"SELECT Id, Make, Model, Year, StockLevel, Price, CreatedAt, UpdatedAt FROM Cars WHERE Id = @Id AND DealerId = @DealerId",
                 new { Id = carId, DealerId = dealerId });
 
             if (car == null)
             {
                 return new ApiResponse<CarResponse>
                 {
-                    Success = false,
+                    Success = true,
                     Message = "Car not found"
                 };
             }
