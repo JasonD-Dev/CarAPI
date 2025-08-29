@@ -128,6 +128,18 @@ dotnet run
 > - DealerId is recognized from the token.
 > - Logout authorization is required when switching between dealers during testing.
 
+
+> [!IMPORTANT]
+> Unfortunately I haven't implemented Unit testing.
+> Instead, the project comes with a Swagger UI that can be used to debug and test all endpoints and functions.
+> Link for swagger will show on console when program is run however, default home page for swagger is:
+> 
+> http://localhost:5051/index.html
+
+>  [!CAUTION]
+> **LOCALHOST LINK ONLY WORKS WHEN RUNNING PROGRAM LOCALLY**
+
+
 ## 🔄 Complete Workflow Example
 Register a dealer
 ```json
@@ -206,4 +218,4 @@ Cars to Add
 
 ## 📊 Architecture Diagram
 
-
+![API Architecture Diagram](https://github.com/JasonD-Dev/CarAPI/blob/main/CarAPIDiagram.png?raw=true)
